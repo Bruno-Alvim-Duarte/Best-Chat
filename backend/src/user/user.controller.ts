@@ -2,6 +2,7 @@ import { Body, Controller, Delete, Get, Param, Post, Put } from '@nestjs/common'
 import { UserService } from './user.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
+import { UserResponseDto } from './dto/user.dto';
 
 @Controller('users')
 export class UserController {
@@ -9,27 +10,27 @@ export class UserController {
 
     }    
     @Get()
-    index() {
+    index(): Promise<UserResponseDto[]> {
         return this.userService.index();; 
     }
 
     @Get(':id')
-    show(@Param('id') id: string) {
+    show(@Param('id') id: string): Promise<UserResponseDto> {
         return this.userService.show(+id);
     }
 
     @Post()
-    store(@Body() user: CreateUserDto) {
+    store(@Body() user: CreateUserDto): Promise<UserResponseDto> {
         return this.userService.store(user);
     }
 
     @Put(':id')
-    update(@Param('id') id: string, @Body() updateUser: UpdateUserDto) {
+    update(@Param('id') id: string, @Body() updateUser: UpdateUserDto): Promise<UserResponseDto> {
         return this.userService.update(+id, updateUser);
     }
 
     @Delete(':id')
-    remove(@Param('id') id: string) {
+    remove(@Param('id') id: string): Promise<void> {
         return this.userService.remove(+id);
     }
 }

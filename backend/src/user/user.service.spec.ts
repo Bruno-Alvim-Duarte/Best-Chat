@@ -66,6 +66,13 @@ describe('UserService', () => {
     expect(prisma.user.findUnique).toHaveBeenCalled();
   });
 
+  it ('should return a error when trying to find a user by id that does not exist', async () => {
+    prisma.user.findUnique = jest.fn().mockResolvedValue(null);
+
+    await expect(service.show(1)).rejects.toThrow();
+    expect(prisma.user.findUnique).toHaveBeenCalled();
+  });
+
   it ('should create a user', async () => {
     const mockUser: CreateUserDto = {
       name: 'John Doe',
