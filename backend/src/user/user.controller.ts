@@ -1,7 +1,9 @@
-import { Controller, Delete, Get, Post, Put } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Post, Put } from '@nestjs/common';
 import { PrismaClient } from '@prisma/client';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { UserService } from './user.service';
+import { CreateUserDto } from './dto/create-user.dto';
+import { UpdateUserDto } from './dto/update-user.dto';
 
 @Controller('users')
 export class UserController {
@@ -14,22 +16,22 @@ export class UserController {
     }
 
     @Get(':id')
-    show() {
-        return 'This action returns a user';
+    show(@Param('id') id: string) {
+        return this.userService.show(+id);
     }
 
     @Post()
-    store() {
-        return 'This action adds a new user';
+    store(@Body() user: CreateUserDto) {
+        return this.userService.store(user);
     }
 
     @Put(':id')
-    update() {
-        return 'This action updates a user';
+    update(@Param('id') id: string, @Body() updateUser: UpdateUserDto) {
+        return this.userService.update(+id, updateUser);
     }
 
     @Delete(':id')
-    remove() {
-        return 'This action removes a user';
+    remove(@Param('id') id: string) {
+        return this.userService.remove(+id);
     }
 }
