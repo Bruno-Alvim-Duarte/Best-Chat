@@ -1,4 +1,3 @@
-// src/auth/guards/jwt-auth.guard.ts
 import { Injectable, CanActivate, ExecutionContext, UnauthorizedException } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { JwtService } from '@nestjs/jwt';
@@ -20,8 +19,6 @@ export class JwtAuthGuard implements CanActivate {
     if (!token) {
       throw new UnauthorizedException('Token not found');
     }
-
-    console.log(request.cookies);
 
     try {
       const payload = this.jwtService.verify(token, {secret: process.env.JWT_SECRET});

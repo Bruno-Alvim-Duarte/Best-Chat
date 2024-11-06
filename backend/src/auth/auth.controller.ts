@@ -11,19 +11,13 @@ export class AuthController {
 
     @Post('login')
     login(@Body() credentials: LoginAuthDto): Promise<LoginAuthResponseDto> {
-        try {
-            return this.authService.login(credentials);
-        } catch (err) {
-            throw new UnauthorizedException(err.message);
-        }
+        return this.authService.login(credentials);
     }
 
 
     @Post('refresh')
     refresh(@Req() req: Request): Promise<LoginAuthResponseDto> {
-        console.log('cookies', req.cookies);
         const { jwt } = req.cookies;
-        console.log('jwt', jwt);
         if (!jwt) throw new UnauthorizedException('JWT token is missing');
         return this.authService.refresh(jwt);
     }
