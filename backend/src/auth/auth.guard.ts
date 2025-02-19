@@ -14,14 +14,18 @@ export class JwtAuthGuard implements CanActivate {
 
   canActivate(context: ExecutionContext): boolean {
     const request = context.switchToHttp().getRequest<CustomRequest>();
-    const token = request.cookies.jwt;
-
-    if (!token) {
+    const authHeader = request.headers.authorization;
+    if (!authHeader) {
       throw new UnauthorizedException('Token not found');
     }
+    const [type, rawToken] = authHeader.split(' ');
+    if (type !== 'Bearer' || !rawToken) {
+      throw new UnauthorizedException('Invalid token format (missing Bearer)');
+    }
+
 
     try {
-      const payload = this.jwtService.verify(token, {secret: process.env.JWT_SECRET});
+      const payload = this.jwtService.verify(rawToken, {secret: process.env.JWT_SECRET});
       request.user = payload;
     } catch {
       throw new UnauthorizedException('Invalid token');

@@ -17,9 +17,16 @@ export class AuthController {
 
     @Post('refresh')
     refresh(@Req() req: Request): Promise<LoginAuthResponseDto> {
-        const { jwt } = req.cookies;
-        if (!jwt) throw new UnauthorizedException('JWT token is missing');
-        return this.authService.refresh(jwt);
+        const authHeader = req.headers.authorization;
+        if (!authHeader) {
+        throw new UnauthorizedException('Token not found');
+        }
+
+        const [type, rawToken] = authHeader.split(' ');
+        if (type !== 'Bearer' || !rawToken) {
+        throw new UnauthorizedException('Invalid token format (missing Bearer)');
+        }
+        return this.authService.refresh(rawToken);
     }
 
     @UseGuards(JwtAuthGuard)
