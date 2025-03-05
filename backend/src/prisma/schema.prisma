@@ -4,15 +4,51 @@ datasource db {
 }
 
 generator client {
-  provider = "prisma-client-js"
-  output = "../../node_modules/.prisma/client"
+  provider      = "prisma-client-js"
+  output        = "../../node_modules/.prisma/client"
   binaryTargets = ["native", "debian-openssl-1.1.x"]
 }
 
 model User {
-  id       Int    @id @default(autoincrement())
+  id       Int     @id @default(autoincrement())
   name     String
-  email    String @unique
-  password String 
+  email    String  @unique
+  password String
   active   Boolean @default(true)
+
+  chats    ChatParticipant[]
+  messages Message[]
+}
+
+model Chat {
+  id            Int      @id @default(autoincrement())
+  lastMessageId Int      @unique
+  createdAt     DateTime @default(now())
+
+  lastMessage  Message           @relation(fields: [lastMessageId], references: [id], name: "lastMessage")
+  participants ChatParticipant[]
+  messages     Message[]
+}
+
+model Message {
+  id        Int      @id @default(autoincrement())
+  chatId    Int
+  content   String
+  senderId  Int
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  chat   Chat   @relation(fields: [chatId], references: [id])
+  sender User   @relation(fields: [senderId], references: [id])
+  Chat   Chat[] @relation(name: "lastMessage")
+}
+
+model ChatParticipant {
+  chatId Int
+  userId Int
+
+  chat Chat @relation(fields: [chatId], references: [id], onDelete: Cascade)
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@id([chatId, userId])
 }
